@@ -21,31 +21,32 @@ public class MouseActionForOpenedCells implements MouseListener
 	{
 		if (evenement.getButton() == MouseEvent.BUTTON2)
 		{
-			game.nop();
-			y = 0 + y;
-			x = 0 + x;
-
+			// TODO create middle click method
 		}
 
 	}
 
 	@Override
-	public void mousePressed(MouseEvent evenement)
+	public void mousePressed(MouseEvent e)
 	{
+		// Unused method from interface
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent evenement)
+	public void mouseReleased(MouseEvent e)
 	{
+		// Unused method from interface
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent evenement)
+	public void mouseEntered(MouseEvent e)
 	{
+		// Unused method from interface
 	}
 
 	@Override
-	public void mouseExited(MouseEvent evenement)
+	public void mouseExited(MouseEvent e)
 	{
+		// // Unused method from interface
 	}
 }

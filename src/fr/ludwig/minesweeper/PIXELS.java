@@ -2,6 +2,11 @@ package fr.ludwig.minesweeper;
 
 public final class PIXELS
 {
+	private PIXELS()
+	{
+		// Empty private constructor for a static class to ensure no object is created from this class
+	}
+
 	static final int BUTTON_WIDTH = 30;
 	static final int BUTTON_HEIGHT = 30;
 	static final int BUTTON_SPACER = 0;

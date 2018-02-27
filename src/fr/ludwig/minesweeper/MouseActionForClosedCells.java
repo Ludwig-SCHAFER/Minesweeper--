@@ -33,19 +33,9 @@ public class MouseActionForClosedCells implements MouseListener
 
 		if (evenement.getButton() == MouseEvent.BUTTON2)
 		{
-			// game.explorerAutourDelaCase(x, y);
+			game.previewAdjacentCells(x, y);
 		}
 
-	}
-
-	@Override
-	public void mousePressed(MouseEvent evenement)
-	{
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent evenement)
-	{
 	}
 
 	@Override
@@ -58,5 +48,17 @@ public class MouseActionForClosedCells implements MouseListener
 	public void mouseExited(MouseEvent evenement)
 	{
 		evenement.getComponent().setBackground(new Color(192, 192, 192));// exact color from windows game was #c0c0c0 !!
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		// Unused method from interface
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		// Unused method from interface
 	}
 }

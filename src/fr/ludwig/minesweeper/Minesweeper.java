@@ -16,7 +16,7 @@ public class Minesweeper extends JFrame
 
 	public static void main(String... args) throws ExceptionMinesweeperInitializationFailed
 	{
-		new Minesweeper(16, 16, 40);
+		new Minesweeper(9, 9, 5);
 	}
 
 	/*
@@ -24,12 +24,10 @@ public class Minesweeper extends JFrame
 	 */
 	private static final long serialVersionUID = 1;
 
-	final boolean DEBUG = false;
+	private transient Cell[][] cells;
 
-	private Cell[][] cells;
-
-	private int width;
-	private int height;
+	private int cellWidth;
+	private int cellHeight;
 	private int traps;
 
 	private GameStatus gameStatus;
@@ -40,21 +38,19 @@ public class Minesweeper extends JFrame
 
 	public Minesweeper(int width, int height, int traps) throws ExceptionMinesweeperInitializationFailed
 	{
-		this.width = width;
-		this.height = height;
+		cellWidth = width;
+		cellHeight = height;
 		this.traps = traps;
 
 		if ((width <= 0))
 		{
 			throw new ExceptionMinesweeperInitializationFailed("WIDTH TOO SMALL (" + width + ")");
-		}
-		else if ((height <= 0))
+		} else if ((height <= 0))
 		{
 			throw new ExceptionMinesweeperInitializationFailed("HEIGHT TOO SMALL (" + height + ")");
-		}
-		else if (traps >= (width * height))
+		} else if (traps >= (width * height))
 		{
-			throw new ExceptionMinesweeperInitializationFailed("TOO MANY TRAPS (" + traps + ") for only " + Long.toString(width * height) + " cells");
+			throw new ExceptionMinesweeperInitializationFailed("TOO MANY TRAPS (" + traps + ") for only " + Integer.toString(width * height) + " cells");
 		}
 
 		initializeJFrame();
@@ -64,10 +60,7 @@ public class Minesweeper extends JFrame
 		intializeCells();
 
 		setTraps();
-		if (DEBUG)
-		{
-			dispGameInConsole();
-		}
+
 		gameStatus = GameStatus.NEW;
 		refresh();
 	}
@@ -78,38 +71,13 @@ public class Minesweeper extends JFrame
 
 	private void intializeCells()
 	{
-		for (int i = 0; i < height; i++)
+		for (int i = 0; i < cellHeight; i++)
 		{
-			for (int j = 0; j < width; j++)
+			for (int j = 0; j < cellWidth; j++)
 			{
 				cells[i][j] = new Cell(this, i, j);
 			}
 		}
-	}
-
-	private void dispGameInConsole()
-	{
-		dispFancyLineInConsole();
-		for (Cell[] line : cells)
-		{
-			for (Cell cell : line)
-			{
-				System.out.print("|" + cell.toText());
-			}
-			System.out.println("|");
-		}
-
-		dispFancyLineInConsole();
-		System.out.println("");
-	}
-
-	private void dispFancyLineInConsole()
-	{
-		for (int i = 0; i < width; i++)
-		{
-			System.out.print("--");
-		}
-		System.out.println("-");
 	}
 
 	private void setTraps()
@@ -123,10 +91,9 @@ public class Minesweeper extends JFrame
 		{
 			do
 			{
-				x = random.nextInt(height);
-				y = random.nextInt(width);
-			}
-			while (cells[x][y].isTrapped());
+				x = random.nextInt(cellHeight);
+				y = random.nextInt(cellWidth);
+			} while (cells[x][y].isTrapped());
 
 			cells[x][y].markAsTrapped();
 
@@ -159,16 +126,18 @@ public class Minesweeper extends JFrame
 
 	private boolean cellExists(int x, int y)
 	{
-		return ((x >= 0) && (x < height) && (y >= 0) && (y < width));
+		return ((x >= 0) && (x < cellHeight) && (y >= 0) && (y < cellWidth));
 	}
 
 	private void initializeJFrame()
 	{
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle("Java Minesweeper (" + width + "," + height + ")");
+		setTitle("Java Minesweeper (" + cellWidth + "," + cellHeight + ")");
 
-		int winwdowWidth = (width * PIXELS.BUTTON_WIDTH) + ((width - 1) * PIXELS.BUTTON_SPACER) + (PIXELS.HORIZONTAL_PADDING * 2) + (2 * PIXELS.WINDOW_BORDER) + 14;
-		int windowHeight = (height * PIXELS.BUTTON_HEIGHT) + ((height - 1) * PIXELS.BUTTON_SPACER) + (PIXELS.VERTICAL_PADDING * 2) + PIXELS.WINDOW_BAR + PIXELS.WINDOW_BORDER + 17;
+		int winwdowWidth = (cellWidth * PIXELS.BUTTON_WIDTH) + ((cellWidth - 1) * PIXELS.BUTTON_SPACER) + (PIXELS.HORIZONTAL_PADDING * 2)
+				+ (2 * PIXELS.WINDOW_BORDER) + 14;
+		int windowHeight = (cellHeight * PIXELS.BUTTON_HEIGHT) + ((cellHeight - 1) * PIXELS.BUTTON_SPACER) + (PIXELS.VERTICAL_PADDING * 2) + PIXELS.WINDOW_BAR
+				+ PIXELS.WINDOW_BORDER + 17;
 
 		setSize(winwdowWidth, windowHeight);
 
@@ -185,9 +154,9 @@ public class Minesweeper extends JFrame
 		final Border border = BorderFactory.createLineBorder(Color.black);
 
 		getContentPane().removeAll();
-		for (int i = 0; i < height; i++)
+		for (int i = 0; i < cellHeight; i++)
 		{
-			for (int j = 0; j < width; j++)
+			for (int j = 0; j < cellWidth; j++)
 			{
 				int componentX = (j * (PIXELS.BUTTON_HEIGHT + PIXELS.BUTTON_SPACER)) + PIXELS.VERTICAL_PADDING;
 				int componentY = (i * (PIXELS.BUTTON_WIDTH + PIXELS.BUTTON_SPACER)) + PIXELS.HORIZONTAL_PADDING;
@@ -197,15 +166,13 @@ public class Minesweeper extends JFrame
 		}
 		repaint();
 
-		if (gameStatus != GameStatus.LOST)
+		if ((gameStatus != GameStatus.LOST) && checkVictoryConditions())
 		{
-			if (checkVictoryConditions())
-			{
-				gameStatus = GameStatus.WON;
-			}
+			gameStatus = GameStatus.WON;
 		}
 
 		if ((gameStatus == GameStatus.WON) || (gameStatus == GameStatus.LOST))
+
 		{
 			showPopup();
 		}
@@ -227,8 +194,7 @@ public class Minesweeper extends JFrame
 		{
 			gameStatus = GameStatus.LOST;
 			revealAllTraps();
-		}
-		else if (cells[x][y].isEmpty())
+		} else if (cells[x][y].isEmpty())
 		{
 			automaticDiscovery(x, y);
 		}
@@ -238,26 +204,42 @@ public class Minesweeper extends JFrame
 
 	private void showPopup()
 	{
-		final String popupTitle = ((gameStatus == GameStatus.WON) ? "Congratulations" : (gameStatus == GameStatus.LOST) ? "Oops" : "ERROR");
-		final String popupMessage = ((gameStatus == GameStatus.WON) ? "Start a new game?" : (gameStatus == GameStatus.LOST) ? "Try again" : "ERROR");
-		final int popupType = ((gameStatus == GameStatus.WON) ? JOptionPane.INFORMATION_MESSAGE : (gameStatus == GameStatus.LOST) ? JOptionPane.WARNING_MESSAGE : JOptionPane.ERROR_MESSAGE);
-		final int popupConfirmation = ((gameStatus == GameStatus.WON) ? JOptionPane.YES_NO_OPTION : (gameStatus == GameStatus.LOST) ? JOptionPane.YES_NO_OPTION : JOptionPane.OK_CANCEL_OPTION);
+		String popupTitle = null;
+		String popupMessage = null;
+		int popupType = 0;
+		int popupConfirmation = 0;
+
+		switch (gameStatus)
+		{
+		case WON:
+			popupTitle = "Congratulations";
+			popupMessage = "Start a new game?";
+			popupType = JOptionPane.INFORMATION_MESSAGE;
+			popupConfirmation = JOptionPane.YES_NO_OPTION;
+			break;
+		case LOST:
+			popupTitle = "Oops";
+			popupMessage = "Try again";
+			popupType = JOptionPane.WARNING_MESSAGE;
+			popupConfirmation = JOptionPane.YES_NO_OPTION;
+			break;
+		default:
+			break;
+		}
 
 		final int answer = JOptionPane.showConfirmDialog(this, popupMessage, popupTitle, popupConfirmation, popupType);
 
 		if (answer == JOptionPane.YES_NO_OPTION)
 		{
-			// TODO : restart
 			try
 			{
 				main();
 				dispose();
-			}
-			catch (ExceptionMinesweeperInitializationFailed e)
+			} catch (ExceptionMinesweeperInitializationFailed e)
 			{
+				return;
 			}
-		}
-		else
+		} else
 		{
 			dispose();
 		}
@@ -265,9 +247,9 @@ public class Minesweeper extends JFrame
 
 	boolean checkVictoryConditions()
 	{
-		for (int i = 0; i < width; i++)
+		for (int i = 0; i < cellWidth; i++)
 		{
-			for (int j = 0; j < height; j++)
+			for (int j = 0; j < cellHeight; j++)
 			{
 				if ((cells[i][j].isNotTrapped() && cells[i][j].isNotOpened()) || cells[i][j].isMarked())
 				{
@@ -297,16 +279,15 @@ public class Minesweeper extends JFrame
 			{
 				for (int j = -1; j <= 1; j++)
 				{
-					int next_x = x + i;
-					int next_y = y + j;
-					if (cellExists(next_x, next_y) && cells[next_x][next_y].isClosed())
+					int nextX = x + i;
+					int nextY = y + j;
+					if (cellExists(nextX, nextY) && cells[nextX][nextY].isClosed())
 					{
-						automaticDiscovery(next_x, next_y);
+						automaticDiscovery(nextX, nextY);
 					}
 				}
 			}
-		}
-		else
+		} else
 		{
 			cells[x][y].open();
 		}
@@ -314,9 +295,9 @@ public class Minesweeper extends JFrame
 
 	private void revealAllTraps()
 	{
-		for (int i = 0; i < width; i++)
+		for (int i = 0; i < cellWidth; i++)
 		{
-			for (int j = 0; j < height; j++)
+			for (int j = 0; j < cellHeight; j++)
 			{
 				if (cells[i][j].isTrapped())
 				{
@@ -331,9 +312,19 @@ public class Minesweeper extends JFrame
 		cells[x][y].toggleStatus();
 	}
 
-	// NOP
-	public void nop()
+	void previewAdjacentCells(int x, int y)
 	{
-		;
+		for (int i = -1; i <= 1; i++)
+		{
+			for (int j = -1; j <= 1; j++)
+			{
+				int nextX = x + i;
+				int nextY = y + j;
+				if (cellExists(nextX, nextY))
+				{
+					cells[nextX][nextY].toString();
+				}
+			}
+		}
 	}
 }

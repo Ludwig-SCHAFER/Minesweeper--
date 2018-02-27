@@ -2,9 +2,5 @@ package fr.ludwig.minesweeper;
 
 public enum GameStatus
 {
-	NEW,
-	PLAYING,
-	WON,
-	LOST;
-
+	NEW, PLAYING, WON, LOST;
 }

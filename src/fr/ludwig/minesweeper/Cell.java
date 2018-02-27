@@ -8,7 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 
-public class Cell extends Object
+public class Cell
 {
 
 	int x;
@@ -51,16 +51,13 @@ public class Cell extends Object
 		if (trapped)
 		{
 			return CHAR_TRAP;
-		}
-		else if (value == 0)
+		} else if (value == 0)
 		{
 			return " ";
-		}
-		else if (value > 0)
+		} else if (value > 0)
 		{
 			return Integer.toString(value);
-		}
-		else
+		} else
 		{
 			return status.getText();
 		}
@@ -82,14 +79,12 @@ public class Cell extends Object
 				label.setText(status.getText());
 				label.setBackground(Color.RED);
 				label.setForeground(Color.WHITE);
-			}
-			else if (status == CellStatus.REVEALED)
+			} else if (status == CellStatus.REVEALED)
 			{
 				label.setText(CHAR_TRAP);
 				label.setBackground(Color.ORANGE);
 				label.setForeground(Color.WHITE);
-			}
-			else if (value > 0)
+			} else if (value > 0)
 			{
 				label.setText(Integer.toString(value));
 				label.setForeground(CellColor.toColor(value));
@@ -101,8 +96,7 @@ public class Cell extends Object
 
 			return label;
 
-		}
-		else
+		} else
 		{
 			JButton button = new JButton();
 
@@ -119,7 +113,7 @@ public class Cell extends Object
 			 * else if (trapped) { button.setText(CHAR_TRAP); } else if (value >= 0) {
 			 * button.setText(Integer.toString(value));
 			 * button.setForeground(CellColor.toColor(value)); }
-			 * 
+			 *
 			 * button.setHorizontalAlignment(JLabel.CENTER);
 			 * button.setVerticalAlignment(JLabel.CENTER); button.setFont(new
 			 * Font("Courrier", Font.BOLD, Math.min(componentWidth, componentHeight) / 2));
@@ -152,8 +146,7 @@ public class Cell extends Object
 			if (trapped)
 			{
 				status = CellStatus.TRIGGERED;
-			}
-			else
+			} else
 			{
 				status = CellStatus.OPEN;
 			}
@@ -180,7 +173,7 @@ public class Cell extends Object
 
 	public void reveal()
 	{
-		if (isMarked() || isMarked() || isClosed())
+		if (isMarked() || isClosed())
 		{
 			status = CellStatus.REVEALED;
 		}
